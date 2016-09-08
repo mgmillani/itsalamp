@@ -1,13 +1,13 @@
 #!/bin/sh
 echo "FF0000 Red"
-sleep 3
+sleep 1
 echo "00FF00 Green"
-sleep 3
+sleep 1
 echo "0000FF Blue"
-sleep 3
+sleep 1
 echo "FFFF00:circle.svg Circle"
-sleep 3
-echo "FF00FF:square.svg Square"
-sleep 3
+sleep 1
+echo "FF00FF:cube.svg Cube"
+sleep 1
 echo "00FFFF:'twin moons.svg' Twin moons"
-sleep 3
+sleep 1
