@@ -40,6 +40,9 @@ int parseInput(char *input, guchar *color, char **message, char **icon)
 	int w = 0;
 	int cl = 0;
 
+	*message = NULL;
+	*icon = NULL;
+
 	while(input[i] != '\0')
 	{
 		char c = input[i];
@@ -70,8 +73,13 @@ int parseInput(char *input, guchar *color, char **message, char **icon)
 				// icon
 				if(c == ':')
 				{
-					state = ICON;
-					*icon = input + i + 1;
+					if(cl == 3)
+					{
+						state = ICON;
+						*icon = input + i + 1;
+					}
+					else
+						return i;
 					break;
 				}
 				// message
@@ -161,6 +169,17 @@ int parseInput(char *input, guchar *color, char **message, char **icon)
 				break;
 		}
 		i++;
+	}
+	// read all color channels and not in the middle of something else
+	if(cl == 0 && state == START)
+		return -1;
+	if(cl == 3)
+	{
+		if(state == COLOR_MOST || state == NO_QUOTE)
+		{
+			*message = NULL;
+			return 0;
+		}
 	}
 	// parse stopped in the middle
 	return i;

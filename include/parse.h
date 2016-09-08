@@ -26,8 +26,9 @@
 /**
  * Parses an input line.
  * Returns 0 in success, or the position of the first incorrect character if the parse fails.
+ * If the input is empty or contain only whitespaces, returns -1.
  * icon and message will point to a substring of input
- * If no icon was informed, the corresponding string is not altered.
+ * If no icon or message was informed, *message or *icon will be set to NULL, respectively.
  */
 int parseInput(char *input, guchar *color, char **message, char **icon);
 
