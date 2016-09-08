@@ -54,7 +54,7 @@ char *getConfigDirectory()
 	}
 	char *configDir = getenv ("XDG_CONFIG_HOME");
 
-  if(configDir == NULL)
+	if(configDir == NULL)
 	{
 		configDir = getenv ("HOME");
 		if(configDir == NULL)

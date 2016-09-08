@@ -26,32 +26,32 @@
 
 void colorMultiply(GdkPixbuf *source, GdkPixbuf *target, guchar color[])
 {
-  int width, height, rowstride, channels;
-  guchar *tPixels, *sPixels;
+	int width, height, rowstride, channels;
+	guchar *tPixels, *sPixels;
 
-  channels = gdk_pixbuf_get_n_channels (target);
+	channels = gdk_pixbuf_get_n_channels (target);
 
-  g_assert (gdk_pixbuf_get_colorspace (target) == GDK_COLORSPACE_RGB);
-  g_assert (gdk_pixbuf_get_bits_per_sample (target) == 8);
-  g_assert (channels == 4 || channels == 3);
+	g_assert (gdk_pixbuf_get_colorspace (target) == GDK_COLORSPACE_RGB);
+	g_assert (gdk_pixbuf_get_bits_per_sample (target) == 8);
+	g_assert (channels == 4 || channels == 3);
 
-  width = gdk_pixbuf_get_width (target);
-  height = gdk_pixbuf_get_height (target);
+	width = gdk_pixbuf_get_width (target);
+	height = gdk_pixbuf_get_height (target);
 
-  rowstride = gdk_pixbuf_get_rowstride (target);
-  tPixels = gdk_pixbuf_get_pixels (target);
-  sPixels = gdk_pixbuf_get_pixels (source);
+	rowstride = gdk_pixbuf_get_rowstride (target);
+	tPixels = gdk_pixbuf_get_pixels (target);
+	sPixels = gdk_pixbuf_get_pixels (source);
 
-  int x,y;
-  for(y=0 ; y < height * rowstride ; y+=rowstride)
-  {
-    for(x=0 ; x < width * channels ; x += channels)
-    {
-      int c;
-      for(c = 0 ; c < 3 ; c++)
-      {
-        tPixels[c + x + y] = (sPixels[c + x + y] * color[c])/255;
-      }
-    }
-  }
+	int x,y;
+	for(y=0 ; y < height * rowstride ; y+=rowstride)
+	{
+		for(x=0 ; x < width * channels ; x += channels)
+		{
+			int c;
+			for(c = 0 ; c < 3 ; c++)
+			{
+				tPixels[c + x + y] = (sPixels[c + x + y] * color[c])/255;
+			}
+		}
+	}
 }
