@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="32"
+   height="32"
+   viewBox="0 0 32 32"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="twin moons.svg">
+  <defs
+     id="defs4">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient4474">
+      <stop
+         style="stop-color:#ffffff;stop-opacity:1"
+         offset="0"
+         id="stop4476" />
+      <stop
+         style="stop-color:#ffffff;stop-opacity:0"
+         offset="1"
+         id="stop4478" />
+    </linearGradient>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4474"
+       id="radialGradient4480-7"
+       cx="18"
+       cy="1038.3622"
+       fx="18"
+       fy="1038.3622"
+       r="13.133588"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.0543862,0,0,1.0543862,-0.9789513,-56.472556)" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4474"
+       id="radialGradient4480-7-9"
+       cx="18"
+       cy="1038.3622"
+       fx="18"
+       fy="1038.3622"
+       r="13.133588"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.0543862,0,0,1.0543862,-0.9789513,-56.472556)" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#eaecef"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="7.919596"
+     inkscape:cx="11.268399"
+     inkscape:cy="17.736042"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     units="px"
+     inkscape:window-width="1366"
+     inkscape:window-height="747"
+     inkscape:window-x="0"
+     inkscape:window-y="21"
+     inkscape:window-maximized="0" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-1020.3622)">
+    <g
+       id="g4666"
+       transform="matrix(0.7434811,0,0,0.7434811,7.6955816,269.95529)">
+      <g
+         transform="translate(0.16964286,0.16967461)"
+         id="g4506-2">
+        <circle
+           style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:#b6b6b6;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.34502411;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+           id="path4320-3-2-2"
+           cx="18"
+           cy="1038.3622"
+           r="11.258587" />
+        <circle
+           style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:url(#radialGradient4480-7);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+           id="path4320-3-2-7-8"
+           cx="18"
+           cy="1038.3622"
+           r="13.847874" />
+      </g>
+      <g
+         transform="translate(-13.830357,-13.830325)"
+         id="g4506-2-6">
+        <circle
+           style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:#b6b6b6;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:1.34502411;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+           id="path4320-3-2-2-1"
+           cx="18"
+           cy="1038.3622"
+           r="11.258587" />
+        <circle
+           style="color:#000000;display:inline;overflow:visible;visibility:visible;opacity:1;fill:url(#radialGradient4480-7-9);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;marker:none;enable-background:accumulate"
+           id="path4320-3-2-7-8-2"
+           cx="18"
+           cy="1038.3622"
+           r="13.847874" />
+      </g>
+    </g>
+  </g>
+</svg>
