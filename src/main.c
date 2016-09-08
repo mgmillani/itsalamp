@@ -134,16 +134,14 @@ gpointer updateIcon(gpointer user_data)
 		TRACE("input: %s", text);
 
 		char *message;
-		char *iconF = NULL;
+		char *iconF;
 		int p = parseInput(text, color, &message, &iconF);
 
 		if(p > 0)
 			ERR("Parse error on chacacter %d\n", p);
 
-		// printf("color = %d,%d,%d\n", color[0], color[1], color[2]);
 		if(iconF != NULL)
 		{
-			TRACE("New icon: %s\n", iconF);
 			// if the icon is different from the current one
 			if(strcmp(iconF, iconData->iconFile) != 0)
 			{
@@ -170,11 +168,14 @@ gpointer updateIcon(gpointer user_data)
 		}
 
 		// updates the icon and the tooltip text
-		gdk_threads_enter();
-		colorMultiply(iconData->origBuf, iconData->currentBuf, color);
-		gtk_status_icon_set_from_pixbuf (icon, iconData->currentBuf);
-		gtk_status_icon_set_tooltip_text(icon, message);
-		gdk_threads_leave();
+		if(p == 0)
+		{
+			gdk_threads_enter();
+			colorMultiply(iconData->origBuf, iconData->currentBuf, color);
+			gtk_status_icon_set_from_pixbuf (icon, iconData->currentBuf);
+			gtk_status_icon_set_tooltip_text(icon, message);
+			gdk_threads_leave();
+		}
 	}
 
 	exit(0);
