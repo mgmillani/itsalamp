@@ -35,12 +35,74 @@
 
 typedef struct s_iconData
 {
-  GdkPixbuf *origBuf;
-  GdkPixbuf *currentBuf;
-  GtkStatusIcon *icon;
-  char *iconFile;
-  int iconFileLen;
+	GdkPixbuf *origBuf;
+	GdkPixbuf *currentBuf;
+	GtkStatusIcon *icon;
+	char *iconFile;
+	int iconFileLen;
 }t_iconData;
+
+char *gIconDir;
+
+/**
+ * Searches for the file on multiple locations:
+ *  1. working dir
+ *  2. icon dir
+ *  3. /usr/share/icons
+ *  4. /usr/local/share/icons
+ */
+GdkPixbuf *findAndLoadPixbuf(const char *fname, GError **error)
+{
+	static const char local[] = "/usr/local/share/icons/";
+	static const char share[] = "/usr/share/icons/";
+	// working dir
+	GdkPixbuf *newIcon = gdk_pixbuf_new_from_file(fname, error);
+	if(newIcon != NULL)
+	  return newIcon;
+
+	// if path is absolute, there is no point seaching in other directories
+	if(fname[0] == '/')
+	  return NULL;
+
+	*error = NULL;
+	// icon dir
+	int n = strlen(fname) + 1;
+	int m = strlen(gIconDir) + 1;
+	int k = MAX(sizeof(local), (unsigned) m) + 1; // local is larger than share, +1 because of the /
+	char *path = malloc( k + n*sizeof(*path));
+	memcpy(path,gIconDir, m-1);
+	path[m-1] = '/';
+	memcpy(path + m, fname, n);
+	TRACE("path: %s", path);
+	newIcon = gdk_pixbuf_new_from_file(path, error);
+	if(newIcon != NULL)
+	{
+	  free(path);
+	  return newIcon;
+	}
+	// /usr/share/icons
+
+	*error = NULL;
+	memcpy(path,share, sizeof(share)-1);
+	memcpy(path + sizeof(share)-1, fname, n);
+	newIcon = gdk_pixbuf_new_from_file(path, error);
+	if(newIcon != NULL)
+	{
+	  free(path);
+	  return newIcon;
+	}
+
+	// /usr/local/share/icons
+	*error = NULL;
+	memcpy(path,local, sizeof(local)-1);
+	memcpy(path + sizeof(local)-1, fname, n);
+	newIcon = gdk_pixbuf_new_from_file(path, error);
+	free(path);
+	if(newIcon != NULL)
+	  return newIcon;
+	else
+	  return NULL;
+}
 
 /**
  * Updates the icon based on input from stdin
@@ -53,103 +115,103 @@ typedef struct s_iconData
  */
 gpointer updateIcon(gpointer user_data)
 {
-  t_iconData *iconData = user_data;
-  GtkStatusIcon *icon = iconData->icon;
-  int textLen = 1024;
-  gchar text[textLen];
-  guchar color[3] = {0,0,0};
-  while(!feof(stdin))
-  {
-    fgets(text, textLen, stdin);
-    int j;
-    for(j=0 ; text[j] != '\0' && text[j] != '\n' ; j++)
-      ;
-    text[j] = '\0';
+	t_iconData *iconData = user_data;
+	GtkStatusIcon *icon = iconData->icon;
+	int textLen = 1024;
+	gchar text[textLen];
+	guchar color[3] = {0,0,0};
+	while(!feof(stdin))
+	{
+	  fgets(text, textLen, stdin);
+	  int j;
+	  for(j=0 ; text[j] != '\0' && text[j] != '\n' ; j++)
+	    ;
+	  text[j] = '\0';
 
-    char *message;
-    char *iconF = NULL;
-    int p = parseInput(text, color, &message, &iconF);
+	  char *message;
+	  char *iconF = NULL;
+	  int p = parseInput(text, color, &message, &iconF);
 
-    if(p > 0)
-      ERR("Parse error on chacacter %d\n", p);
+	  if(p > 0)
+	    ERR("Parse error on chacacter %d\n", p);
 
-    // printf("color = %d,%d,%d\n", color[0], color[1], color[2]);
-    if(iconF != NULL)
-    {
-      TRACE("New icon: %s\n", iconF);
-      // if the icon is different from the current one
-      if(strcmp(iconF, iconData->iconFile) != 0)
-      {
-        GError *error = NULL;
-        GdkPixbuf *newIcon = gdk_pixbuf_new_from_file(iconF, &error);
-        if(newIcon == NULL)
-          ERR("Error: %s\n", error->message);
-        else
-        {
-          // increases string size if necessary
-          int len = strlen(iconF);
-          if(len > iconData->iconFileLen)
-          {
-            iconData->iconFileLen = len;
-            iconData->iconFile = realloc(iconData->iconFile, iconData->iconFileLen);
-          }
-          strcpy(iconData->iconFile, iconF);
-          g_object_unref(iconData->origBuf);
-          g_object_unref(iconData->currentBuf);
-          iconData->currentBuf = gdk_pixbuf_copy(newIcon);
-          iconData->origBuf = newIcon;
-        }
-      }
-    }
+	  // printf("color = %d,%d,%d\n", color[0], color[1], color[2]);
+	  if(iconF != NULL)
+	  {
+	    TRACE("New icon: %s\n", iconF);
+	    // if the icon is different from the current one
+	    if(strcmp(iconF, iconData->iconFile) != 0)
+	    {
+	      GError *error = NULL;
+	      GdkPixbuf *newIcon = findAndLoadPixbuf(iconF, &error);
+	      if(newIcon == NULL)
+	        ERR("Error: %s\n", error->message);
+	      else
+	      {
+	        // increases string size if necessary
+	        int len = strlen(iconF);
+	        if(len > iconData->iconFileLen)
+	        {
+	          iconData->iconFileLen = len;
+	          iconData->iconFile = realloc(iconData->iconFile, iconData->iconFileLen);
+	        }
+	        strcpy(iconData->iconFile, iconF);
+	        g_object_unref(iconData->origBuf);
+	        g_object_unref(iconData->currentBuf);
+	        iconData->currentBuf = gdk_pixbuf_copy(newIcon);
+	        iconData->origBuf = newIcon;
+	      }
+	    }
+	  }
 
-    // updates the icon and the tooltip text
-    gdk_threads_enter();
-    colorMultiply(iconData->origBuf, iconData->currentBuf, color);
-    gtk_status_icon_set_from_pixbuf (icon, iconData->currentBuf);
-    gtk_status_icon_set_tooltip_text(icon, message);
-    gdk_threads_leave();
-  }
+	  // updates the icon and the tooltip text
+	  gdk_threads_enter();
+	  colorMultiply(iconData->origBuf, iconData->currentBuf, color);
+	  gtk_status_icon_set_from_pixbuf (icon, iconData->currentBuf);
+	  gtk_status_icon_set_tooltip_text(icon, message);
+	  gdk_threads_leave();
+	}
 
-  return NULL;
+	return NULL;
 }
 
 int main (int argc, char **argv)
 {
-  /* Initialize i18n support */
-  gtk_set_locale ();
-  /* Initialize the widget set */
-  gtk_init (&argc, &argv);
+	/* Initialize i18n support */
+	gtk_set_locale ();
+	/* Initialize the widget set */
+	gtk_init (&argc, &argv);
 
-  // go to the icon directory
-  prepareConfigDirectory();
-  char *iconDir = getIconDirectory();
-  chdir(iconDir);
-  free(iconDir);
+	// go to the icon directory
+	prepareConfigDirectory();
+	gIconDir = getIconDirectory();
 
-  // loads a default icon
-  t_iconData iconData;
-  char iconF[] = "default.svg";
-  iconData.iconFileLen = sizeof(iconF)*2;
-  iconData.iconFile = malloc(iconData.iconFileLen);
-  strcpy(iconData.iconFile, iconF);
-  GError *error = NULL;
-  GdkPixbuf *iconBuf = gdk_pixbuf_new_from_file(iconData.iconFile, &error);
-  if(iconBuf == NULL)
-    printf("Error: %s\n", error->message);
+	// loads a default icon
+	t_iconData iconData;
+	char iconF[] = "default.svg";
+	iconData.iconFileLen = sizeof(iconF)*2;
+	iconData.iconFile = malloc(iconData.iconFileLen);
+	strcpy(iconData.iconFile, iconF);
+	GError *error = NULL;
+	GdkPixbuf *iconBuf = findAndLoadPixbuf(iconData.iconFile, &error);
+	if(iconBuf == NULL)
+	  printf("Error: %s\n", error->message);
 
-  // starts the status icon
+	// starts the status icon
 	GtkStatusIcon *icon = gtk_status_icon_new_from_pixbuf(iconBuf);
-  gtk_status_icon_set_tooltip_text(icon, "");
+	gtk_status_icon_set_tooltip_text(icon, "");
 
-  iconData.origBuf = gdk_pixbuf_copy (iconBuf);
-  iconData.currentBuf = iconBuf;
-  iconData.icon = icon;
+	iconData.origBuf = gdk_pixbuf_copy (iconBuf);
+	iconData.currentBuf = iconBuf;
+	iconData.icon = icon;
 
-  GThread *updateIconThread = g_thread_new ("update icon", updateIcon, &iconData);
+	/*GThread *updateIconThread =*/ g_thread_new ("update icon", updateIcon, &iconData);
 
-  gdk_threads_enter();
-  gtk_main ();
-  gdk_threads_leave();
+	gdk_threads_enter();
+	gtk_main ();
+	gdk_threads_leave();
 
-  return 0;
+	free(gIconDir);
+
+	return 0;
 }
