@@ -145,6 +145,7 @@ gpointer updateIcon(gpointer user_data)
 			// if the icon is different from the current one
 			if(strcmp(iconF, iconData->iconFile) != 0)
 			{
+				TRACE("New icon");
 				GError *error = NULL;
 				GdkPixbuf *newIcon = findAndLoadPixbuf(iconF, &error);
 				if(newIcon == NULL)
@@ -170,6 +171,7 @@ gpointer updateIcon(gpointer user_data)
 		// updates the icon and the tooltip text
 		if(p == 0)
 		{
+			TRACE("updating icon...");
 			gdk_threads_enter();
 			colorMultiply(iconData->origBuf, iconData->currentBuf, color);
 			gtk_status_icon_set_from_pixbuf (icon, iconData->currentBuf);
