@@ -1,0 +1,11 @@
+#!/bin/sh
+echo "00FF00:wallclock-t0.svg 4s"
+sleep 1
+echo "99FF00:wallclock-t1.svg 3s"
+sleep 1
+echo "ffff00:wallclock-t2.svg 2s"
+sleep 1
+echo "FF9900:wallclock-t3.svg 1s"
+sleep 1
+echo "FF0000:wallclock-t4.svg 0s"
+sleep 1
