@@ -36,8 +36,8 @@ void prepareConfigDirectory()
 {
 	char *configDir = getConfigDirectory();
 	char *iconDir = getIconDirectory();
-	mkdir(configDir, 0755);
-	mkdir(iconDir, 0755);
+	mkdir(configDir, 0700);
+	mkdir(iconDir, 0700);
 	free(iconDir);
 	free(configDir);
 }
