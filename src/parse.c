@@ -24,12 +24,6 @@
 
 #include "debug.h"
 
-#define IS_DIGIT(c) ((c) >= '0' && (c) <= '9')
-#define IS_HEXAH(c) ((c) >= 'A' && (c) <= 'F')
-#define IS_HEXAL(c) ((c) >= 'a' && (c) <= 'f')
-
-#define FROM_HEXA(c) ( (c) < 'A' ? (c) - '0' : (c) - 'A' + 10)
-
 int parseInput(char *input, guchar *color, char **message, char **icon)
 {
 	typedef enum {START, COLOR_MOST, COLOR_LEAST, ICON, NO_QUOTE, DOUBLE_QUOTE, ESCAPE, SINGLE_QUOTE, MESSAGE} e_state;

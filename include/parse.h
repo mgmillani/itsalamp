@@ -23,6 +23,12 @@
 #ifndef PARSE_H
 #define PARSE_H
 
+#define IS_DIGIT(c) ((c) >= '0' && (c) <= '9')
+#define IS_HEXAH(c) ((c) >= 'A' && (c) <= 'F')
+#define IS_HEXAL(c) ((c) >= 'a' && (c) <= 'f')
+
+#define FROM_HEXA(c) ( (c) < 'A' ? (c) - '0' : (c) - 'A' + 10)
+
 /**
  * Parses an input line.
  * Returns 0 in success, or the position of the first incorrect character if the parse fails.
