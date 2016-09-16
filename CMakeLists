@@ -36,6 +36,7 @@ if(GTK2_FOUND)
 			icons/cube.svg
 			icons/default.svg
 			icons/diamond-1.svg
+			icons/shield-1.svg
 			"icons/twin moons.svg"
 			icons/wallclock-t0.svg
 			icons/wallclock-t1.svg
