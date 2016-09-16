@@ -21,9 +21,9 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include <unistd.h>
-#include <sys/stat.h>
-#include <sys/types.h>
+// #include <unistd.h> // required for prepareConfigDirectory()
+// #include <sys/stat.h>
+// #include <sys/types.h>
 
 #include "config.h"
 
@@ -32,15 +32,16 @@
 char *gConfigDir = NULL;
 char *gIconDir = NULL;
 
-void prepareConfigDirectory()
-{
-	char *configDir = getConfigDirectory();
-	char *iconDir = getIconDirectory();
-	mkdir(configDir, 0700);
-	mkdir(iconDir, 0700);
-	free(iconDir);
-	free(configDir);
-}
+
+// void prepareConfigDirectory() // removed so we do not need to depend on system-specific libraries
+// {
+	// char *configDir = getConfigDirectory();
+	// char *iconDir = getIconDirectory();
+	// mkdir(configDir, 0700);
+	// mkdir(iconDir, 0700);
+	// free(iconDir);
+	// free(configDir);
+// }
 
 char *getConfigDirectory()
 {

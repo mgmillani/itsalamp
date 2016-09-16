@@ -25,8 +25,6 @@
 #include <gtk/gtk.h>
 #include <glib.h>
 
-#include <unistd.h>
-
 #include "image.h"
 #include "parse.h"
 #include "config.h"
@@ -192,7 +190,7 @@ int main (int argc, char **argv)
 	gtk_init (&argc, &argv);
 
 	// go to the icon directory
-	prepareConfigDirectory();
+	// prepareConfigDirectory(); // removed so that we do not need to depend on system-specific libraries
 	gIconDir = getIconDirectory();
 
 	// loads a default icon
