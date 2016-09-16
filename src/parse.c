@@ -58,7 +58,7 @@ int parseInput(char *input, guchar *color, char **message, char **icon)
 				// checks if it is an hexadecimal digit
 				if( ! (IS_DIGIT(c) || IS_HEXAH(toupper(c))) )
 					return i;
-				color[cl] |= FROM_HEXA(c);
+				color[cl] |= FROM_HEXA(c); // color is definitely already initialized
 				cl++;
 				state = COLOR_MOST;
 				break;
