@@ -13,6 +13,7 @@
 #include <unistd.h>
 
 #include "debug.h"
+//#include "magic.h"
 
 // flags for what must chnage
 #define CH_NOTHING 0
@@ -103,7 +104,7 @@ int parseTime(char *time)
  * Parses the color specified by str and writes it to the vector color.
  * str must contain a color encoded in hexadecimal (e.g. html format)
  */
-int parseColor(char *str, double *RGB)
+int parseRGB(char *str, double *RGB)
 {
 	int i;
 	unsigned char color;
@@ -157,13 +158,13 @@ int main(int argc, char *argv[])
 	}
 
 	double color0[3];
-	if(parseColor(argv[2], color0) != 0)
+	if(parseRGB(argv[2], color0) != 0)
 	{
 		ERR("Wrong color format. Use something like 'FF00CC'. (provided: %s)", argv[2]);
 		exit(1);
 	}
 	double color1[3];
-	if(parseColor(argv[3], color1) != 0)
+	if(parseRGB(argv[3], color1) != 0)
 	{
 		ERR("Wrong color format. Use something like 'FF00CC'. (provided: %s)", argv[3]);
 		exit(1);
