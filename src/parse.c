@@ -19,12 +19,175 @@
  */
 
 #include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "parse.h"
 
 #include "debug.h"
 
-int parseInput(char *input, guchar *color, char **message, char **icon)
+int parseInput(char *input, t_input *parsed)
+{
+	int i = 0;
+	int retval = PARSE_EMPTY;
+	while(input[i] != '\0')
+	{
+		switch(input[i])
+		{
+			case '#':
+				retval = parseIcon(input+i+1, &parsed->colorInput);
+				if(retval == -1)
+					retval = PARSE_ICON;
+				break;
+			case '+':
+				parsed->itemInput.add = 1;
+				retval = parseItem(input+i+1, &parsed->itemInput);
+				if(retval == -1)
+					retval = PARSE_ITEM;
+				break;
+			case '-':
+				parsed->itemInput.add = 0;
+				retval = parseItem(input+i+1, &parsed->itemInput);
+				if(retval == -1)
+					retval = PARSE_ITEM;
+				break;
+			case '!':
+				retval = parseCommand(input+i+1, &parsed->commandInput);
+				// if(retval == -1)
+					// retval = PARSE_COMMAND;
+				break;
+		}
+
+		if(retval != PARSE_EMPTY)
+			return retval;
+		i++;
+	}
+	return PARSE_EMPTY;
+}
+
+int parseItem(char *input, t_itemInput *itemInput)
+{
+	char *origInput = input;
+	int diff;
+	// item
+	int retval = readWord(&input, &itemInput->item);
+	if(retval != -1)
+		return retval;
+	diff = input - origInput;
+	TRACE("item: %s", itemInput->item);
+	TRACE("rest: %s", input);
+
+	// reads the ID
+	itemInput->id = NULL;
+	retval = readWord(&input, &itemInput->id);
+	if(retval != -1)
+		return retval + diff;
+
+	return -1;
+}
+
+int parseCommand(char *input, t_commandInput *commandInput)
+{
+	char *origInput = input;
+	int diff;
+	// exit / quit
+	char *cmd;
+	int retval = readWord(&input, &cmd);
+	if(retval != -1)
+		return retval;
+	diff = input - origInput;
+	TRACE("cmd: (%s)", cmd);
+
+	int i;
+	for(i=0 ; cmd[i] !='\0'; i++)
+		cmd[i] = tolower(cmd[i]);
+
+	if(strcmp(cmd, "exit") == 0 || strcmp(cmd,"quit") == 0)
+	{
+		commandInput->cmd = CMD_QUIT;
+		return PARSE_QUIT;
+	}
+
+	return diff;
+}
+
+int readWord(char **text, char **word)
+{
+	typedef enum {START, NO_QUOTE, QUOTE, ESCAPE} e_state;
+	e_state state = START;
+	e_state next = START;
+
+	char *input = *text;
+	char quote = '\0';
+	int i=0;
+	int w=0;
+
+	while(input[i] != '\0')
+	{
+		switch(state)
+		{
+			case START:
+				switch(input[i])
+				{
+					// open quote
+					case '\'':
+					case '"': state = QUOTE; quote = input[i]; *word = input+i+1; break;
+					// escape
+					case '\\': next = state; state = ESCAPE; break;
+					// whitespace
+					case ' ':
+					case '\n':
+					case '\r':
+					case '\t': break;
+					// some other character
+					default: state = NO_QUOTE; *word = input+i ; break;
+				}
+				break;
+			case QUOTE:
+				if(input[i] == quote)
+				{
+					*text = input+i+1;
+					input[w] = '\0';
+					return -1;
+				}
+				else if(input[i] == '\\')
+				{
+					next = state;
+					state = ESCAPE;
+					w--;
+				}
+				break;
+			case NO_QUOTE:
+				switch(input[i])
+				{
+					// words ends on whitespace
+					case ' ':
+					case '\n':
+					case '\r':
+					case '\t': *text = input+i+1; input[w] = '\0'; return -1;
+					// escape
+					case '\\': next = state; state = ESCAPE; w--; break;
+					default: break;
+				}
+				break;
+			case ESCAPE:
+				state = next;
+				w--;
+				break;
+		}
+		input[w++] = input[i];
+		i++;
+	}
+
+	*text = input + i;
+	if(state == START || state == NO_QUOTE)
+		return -1;
+	else
+		return i;
+
+}
+
+int parseIcon(char *input, t_colorInput *colorInput)
 {
 	typedef enum {START, COLOR_MOST, COLOR_LEAST, ICON, NO_QUOTE, DOUBLE_QUOTE, ESCAPE, SINGLE_QUOTE, MESSAGE} e_state;
 	e_state state = START;
@@ -34,6 +197,9 @@ int parseInput(char *input, guchar *color, char **message, char **icon)
 	int w = 0;
 	int cl = 0;
 
+	char **message = &(colorInput->message);
+	char **icon = &(colorInput->icon);
+	unsigned char *color = colorInput->color;
 	*message = NULL;
 	*icon = NULL;
 
@@ -158,7 +324,7 @@ int parseInput(char *input, guchar *color, char **message, char **icon)
 				if( c != ' ' && c != '\t')
 				{
 					*message = input + i;
-					return 0;
+					return -1;
 				}
 				break;
 		}
@@ -172,9 +338,10 @@ int parseInput(char *input, guchar *color, char **message, char **icon)
 		if(state == COLOR_MOST || state == NO_QUOTE)
 		{
 			*message = NULL;
-			return 0;
+			return -1;
 		}
 	}
 	// parse stopped in the middle
 	return i;
 }
+
