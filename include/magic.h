@@ -17,5 +17,10 @@ You should have received a copy of the GNU General Public License
 along with itsalamp.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef MAGIC_H
+#define MAGIC_H
+
 #define MAX(x,y) ((x) > (y) ? (x) : (y))
 #define MIN(x,y) ((x) > (y) ? (y) : (x))
+
+#endif /* MAGIC_H */
