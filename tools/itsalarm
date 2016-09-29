@@ -25,17 +25,22 @@ function help()
 
 function alarm()
 {
-	itsacounter $TIME 00FF00 FF9900 ${ICONS[@]}
-	echo "FF0000:'$FINAL' Time is up!"
+	# option to reset the timer. The string 'reset' will be sent to itsacounter
+	echo "+'Reset ($TIME)' reset"
+	# option to set the timer to a specific value
+	#echo "+'10 Minutes' 10m"
+	itsacounter $TIME 00FF00 FF9900 ${ICONS[@]} < "$FIFO"
+
+	echo "#FF0000:'$FINAL' Time is up!"
 	# notify with a popup
 	notify-send -u critical "Time is up!"
 	# blink quickly
 	for (( i=0 ; i < 10 ; i++ ))
 	do
 		sleep 0.2
-		echo "FFFFFF Time is up!"
+		echo "#FFFFFF Time is up!"
 		sleep 0.2
-		echo "FF0000 Time is up!"
+		echo "#FF0000 Time is up!"
 	done
 
 	sleep 5
@@ -59,4 +64,13 @@ fi
 FINAL=${ICONS[${#ICONS[@]} - 1]}
 unset ICONS[${#ICONS[@]}-1]
 
-alarm | itsalamp
+PID=$$
+# setup a fifo
+mkdir -p /tmp/itsalarm
+FIFO=/tmp/itsalarm/fifo."$PID"
+# if the fifo already exists, it belonged to a dead process
+rm -f "$FIFO"
+mkfifo "$FIFO"
+
+alarm | itsalamp > "$FIFO"
+rm "$FIFO"
