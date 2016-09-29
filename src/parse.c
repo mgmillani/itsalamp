@@ -56,6 +56,14 @@ int parseInput(char *input, t_input *parsed)
 				// if(retval == -1)
 					// retval = PARSE_COMMAND;
 				break;
+			case ' ':
+			case '\t':
+			case '\n':
+			case '\r':
+				break;
+			// unknown character
+			default:
+				return 0;
 		}
 
 		if(retval != PARSE_EMPTY)
@@ -67,21 +75,21 @@ int parseInput(char *input, t_input *parsed)
 
 int parseItem(char *input, t_itemInput *itemInput)
 {
-	char *origInput = input;
-	int diff;
 	// item
 	int retval = readWord(&input, &itemInput->item);
 	if(retval != -1)
 		return retval;
-	diff = input - origInput;
 	TRACE("item: %s", itemInput->item);
 	TRACE("rest: %s", input);
 
 	// reads the ID
 	itemInput->id = NULL;
-	retval = readWord(&input, &itemInput->id);
-	if(retval != -1)
-		return retval + diff;
+	int i;
+	for(i=0 ; input[i] == '\n' || input[i] == ' ' || input[i] == '\t'; i++)
+		;
+
+	if(input[i] != '\0')
+		itemInput->id = input+i;
 
 	return -1;
 }
