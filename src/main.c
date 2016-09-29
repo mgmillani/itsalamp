@@ -33,6 +33,13 @@
 
 #include "debug.h"
 
+typedef struct s_option
+{
+	char *name;
+	char *id;
+	GtkWidget *item;
+}t_option;
+
 typedef struct s_iconData
 {
 	GdkPixbuf *origBuf;
@@ -41,17 +48,69 @@ typedef struct s_iconData
 	GtkMenu *menu;
 	char *iconFile;
 	int iconFileLen;
+	t_option *option;
+	int optionLen;
 }t_iconData;
 
 char *gIconDir;
 
+void initOption(t_iconData *iconData)
+{
+	iconData->optionLen = 8;
+	iconData->option = malloc(sizeof(*iconData->option) * iconData->optionLen);
+	int i;
+	for(i=0 ; i<iconData->optionLen ; i++)
+		iconData->option[i].item = NULL;
+}
+
+void appendOption(t_option *opt, t_iconData *iconData)
+{
+	int i;
+	for(i=0 ; i<iconData->optionLen ; i++)
+	{
+		if(iconData->option[i].item == NULL)
+		{
+			iconData->option[i] = *opt;
+			return;
+		}
+	}
+	// increase array len
+	int increase = iconData->optionLen;
+	iconData->optionLen *= 2;
+	iconData->option = realloc(iconData->option, sizeof(*iconData->option) * iconData->optionLen);
+	// set option[i].item to NULL so that we know those positions are empty
+	for(i = increase ; i<iconData->optionLen ; i++)
+		iconData->option[i].item = NULL;
+}
+
+void removeOption(char *name, t_iconData *iconData)
+{
+	// finds the option
+	int i;
+	for(i=0 ; i<iconData->optionLen ; i++)
+	{
+		if(iconData->option[i].item == NULL)
+			continue;
+		if(strcmp(name, iconData->option[i].name) == 0)
+		{
+			gtk_container_remove(GTK_CONTAINER(iconData->menu), GTK_WIDGET(iconData->option[i].item));
+			free(iconData->option[i].name);
+			if(iconData->option[i].id != NULL)
+				free(iconData->option[i].id);
+			iconData->option[i].item = NULL;
+		}
+	}
+}
+
 void printMenu(GtkMenuItem *menuItem, gpointer user_data)
 {
+	TRACE("user selected %s", gtk_menu_item_get_label(menuItem));
 	char *id = user_data;
 	if(id == NULL)
 		puts(gtk_menu_item_get_label(menuItem));
 	else
 		puts(id);
+	fflush(stdout);
 }
 
 /**
@@ -92,7 +151,7 @@ GdkPixbuf *findAndLoadPixbuf(const char *fname, GError **error)
 		memcpy(path, dirs[i], m);
 		path[m-1] = '/';
 		memcpy(path + m, fname, n);
-		TRACE("searching for: %s", path);
+		TRACE("searching for: '%s'", path);
 
 		*error = NULL;
 		newIcon = gdk_pixbuf_new_from_file(path, error);
@@ -146,6 +205,7 @@ void updateIcon(t_iconData *iconData, t_colorInput *colorInput)
 	colorMultiply(iconData->origBuf, iconData->currentBuf, colorInput->color);
 	gtk_status_icon_set_from_pixbuf (icon, iconData->currentBuf);
 	gtk_status_icon_set_tooltip_text(icon, colorInput->message);
+	TRACE("Tooltip: (%s)", colorInput->message);
 	gdk_threads_leave();
 
 }
@@ -153,10 +213,32 @@ void updateIcon(t_iconData *iconData, t_colorInput *colorInput)
 void updateItem(t_iconData *iconData, t_itemInput *item)
 {
 	TRACE("item: %s", item->item);
-	GtkWidget *mitem = gtk_menu_item_new_with_label(item->item);
-	g_signal_connect(mitem, "activate", G_CALLBACK(printMenu), item->id);
-	gtk_menu_shell_prepend(GTK_MENU_SHELL(iconData->menu), mitem);
+	TRACE("id: %s", item->id);
+	if(item->add)
+	{
+		t_option option;
+		int itemLen = strlen(item->item) + 1;
+		option.name = malloc(itemLen);
+		memcpy(option.name, item->item, itemLen);
+		option.item = gtk_menu_item_new_with_label(option.name);
 
+		if(item->id != NULL)
+		{
+			itemLen = strlen(item->id) + 1;
+			option.id = malloc(itemLen);
+			memcpy(option.id, item->id, itemLen);
+		}
+		else
+			option.id = NULL;
+		TRACE("option.id: %p", option.id);
+		g_signal_connect(option.item, "activate", G_CALLBACK(printMenu), option.id);
+		gtk_menu_shell_prepend(GTK_MENU_SHELL(iconData->menu), GTK_WIDGET(option.item));
+		appendOption(&option, iconData);
+	}
+	else
+	{
+		removeOption(item->item, iconData);
+	}
 }
 
 /**
@@ -186,6 +268,12 @@ gpointer updateAll(gpointer user_data)
 
 		if(fgets(text, textLen, stdin) == NULL)
 			exit(0);
+
+		// remove \n
+		int i;
+		for(i=0 ; text[i] != '\n' && text[i] != '\r' && text[i] != '\0' ; i++)
+			;
+		text[i] = '\0';
 
 		t_input input;
 		int type = parseInput(text, &input);
@@ -221,6 +309,7 @@ void quitMenu(GtkMenuItem *menuItem, gpointer user_data)
 	menuItem = menuItem;
 	user_data = user_data;
 	//
+	printf("quit");
 	exit(0);
 }
 
@@ -236,9 +325,16 @@ void setupMenu(t_iconData *iconData)
 	GtkWidget *menu = gtk_menu_new();
 	iconData->menu = GTK_MENU(menu);
 
-	GtkWidget *quit = gtk_menu_item_new_with_label ("Quit");
-	g_signal_connect(quit, "activate", G_CALLBACK(quitMenu), NULL);
-	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), quit);
+	t_option quit;
+	quit.id = NULL;
+	const char name[] = "Quit";
+	quit.name = malloc(sizeof(name));
+	memcpy(quit.name, name, sizeof(name));
+	quit.item = gtk_menu_item_new_with_label(quit.name);
+	g_signal_connect(quit.item, "activate", G_CALLBACK(quitMenu), NULL);
+	gtk_menu_shell_prepend(GTK_MENU_SHELL(menu), quit.item);
+
+	appendOption(&quit, iconData);
 
 	g_signal_connect(iconData->icon, "popup-menu", G_CALLBACK(popupMenu), menu);
 }
@@ -255,6 +351,7 @@ int main (int argc, char **argv)
 
 	// loads a default icon
 	t_iconData iconData;
+	initOption(&iconData);
 	char iconF[] = "default.svg";
 	iconData.iconFileLen = sizeof(iconF)*2;
 	iconData.iconFile = malloc(iconData.iconFileLen);
