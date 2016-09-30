@@ -55,3 +55,35 @@ void colorMultiply(GdkPixbuf *source, GdkPixbuf *target, guchar color[])
 		}
 	}
 }
+
+
+void colorSet(GdkPixbuf *target, guchar color[])
+{
+	int width, height, rowstride, channels;
+	guchar *tPixels;
+
+	channels = gdk_pixbuf_get_n_channels (target);
+
+	g_assert (gdk_pixbuf_get_colorspace (target) == GDK_COLORSPACE_RGB);
+	g_assert (gdk_pixbuf_get_bits_per_sample (target) == 8);
+	g_assert (channels == 4 || channels == 3);
+
+	width = gdk_pixbuf_get_width (target);
+	height = gdk_pixbuf_get_height (target);
+
+	rowstride = gdk_pixbuf_get_rowstride (target);
+	tPixels = gdk_pixbuf_get_pixels (target);
+
+	int x,y;
+	for(y=0 ; y < height * rowstride ; y+=rowstride)
+	{
+		for(x=0 ; x < width * channels ; x += channels)
+		{
+			int c;
+			for(c = 0 ; c < channels ; c++)
+			{
+				tPixels[c + x + y] = color[c];
+			}
+		}
+	}
+}

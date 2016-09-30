@@ -32,4 +32,9 @@
  */
 void colorMultiply(GdkPixbuf *source, GdkPixbuf *target, guchar color[]);
 
+/**
+ * Sets the entire buf to the specific color
+ */
+void colorSet(GdkPixbuf *source, guchar color[]);
+
 #endif // IMAGE_H
