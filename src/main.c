@@ -358,15 +358,20 @@ int main (int argc, char **argv)
 	strcpy(iconData.iconFile, iconF);
 	GError *error = NULL;
 	GdkPixbuf *iconBuf = findAndLoadPixbuf(iconData.iconFile, &error);
-	if(iconBuf == NULL)
-		printf("Error: %s\n", error->message);
-
 	// starts the status icon
-	GtkStatusIcon *icon = gtk_status_icon_new_from_pixbuf(iconBuf);
-	gtk_status_icon_set_tooltip_text(icon, "");
-
+	GtkStatusIcon *icon;
+	if(iconBuf == NULL)
+	{
+		icon = gtk_status_icon_new();
+		iconBuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, 1, 8, 8, 8);
+		unsigned char color[4] = {0,0,0,0};
+		colorSet(iconBuf, color);
+	}
+	icon = gtk_status_icon_new_from_pixbuf(iconBuf);
 	iconData.origBuf = gdk_pixbuf_copy (iconBuf);
+	gtk_status_icon_set_tooltip_text(icon, "");
 	iconData.currentBuf = iconBuf;
+
 	iconData.icon = icon;
 
 	setupMenu(&iconData);
