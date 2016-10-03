@@ -100,7 +100,7 @@ char *getIconDirectory()
 	if(cDir == NULL)
 		return NULL;
 	int n = strlen(cDir);
-	char subdir[] = "/icons";
+	char subdir[] = "/icons/";
 	cDir = realloc(cDir, n + sizeof(subdir));
 	strcat(cDir, subdir);
 	return cDir;
