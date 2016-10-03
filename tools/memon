@@ -1,0 +1,33 @@
+#!/bin/bash
+
+LOW=400
+HIGH=2000
+LOWC="33DE00"
+HIGHC="FF7722"
+ICONS=(trizza-t0.svg trizza-t1.svg trizza-t2.svg)
+
+LWIDTH=$[ $HIGH - $LOW]
+NUMICONS=${#ICONS[@]}
+
+free -s 5 --mega | while read line
+do
+	if [[ ${line:0:3} == 'Mem' ]]
+	then
+		INFO=(${line:5: -1})
+#		echo Total "${INFO[0]}" Used "${INFO[1]}"
+		if [[ ${INFO[1]} > $HIGH ]]
+		then
+			HWIDTH=$[ ${INFO[0]} - $HIGH ]
+			COLOR=$HIGHC
+			I=$[ (${INFO[1]} - $HIGH) / ($HWIDTH / NUMICONS) ]
+		else
+			COLOR=$LOWC
+			I=$[ (${INFO[1]} - $LOW) / ($LWIDTH / NUMICONS) ]
+		fi
+
+		echo "#$COLOR:'${ICONS[$I]}' ${INFO[1]} / ${INFO[0]} MB"
+	fi
+done | itsalamp
+
+
+
