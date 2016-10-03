@@ -25,7 +25,7 @@ It is what the name says: a lamp. The idea is to be able to control the tray ico
 - !quit
   - Quits the program (!exit works as well).
 
-_COLOR_ is a RGB color in hexadecimal format (e.g., BB99CC). Single or double quotes can be used to when a term has spaces on it. A `\\' can also be used to escape any character. Icons are searched in the following directories:
+_COLOR_ is an RGB color in hexadecimal format (e.g., BB99CC). Single or double quotes can be used when a term has spaces on it. A `\\` can also be used to escape any character. Icons are searched in the following directories:
 
     $XDG_CONFIG_HOME/itsalamp/icons/
     /usr/local/share/icons/itsalamp/
@@ -44,8 +44,8 @@ This program is a countdown which outputs commands for `itsalamp`. It should be 
 As time passes, the icon color will go from _INITIAL COLOR_ to _FINAL COLOR_ using a brightness preserving interpolation. The icon is changed in a way that each icon appears for the same amount of time. `itsacounter` also receives commands from the standard input:
 
 - reset
-  - Resets the timer
-- \[_HOURS_h\]\[_MINUTES_m\]\[_SECONDS_s\]
+  - Resets the timer.
+- [_HOURS_h]\[_MINUTES_m\]\[_SECONDS_s\]
   - Sets the timer to the specified time.
 
 ### itsalarm
