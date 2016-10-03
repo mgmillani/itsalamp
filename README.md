@@ -16,16 +16,16 @@ This will install the programs `itsalamp`, `itsacounter` and `itsalarm` to `/usr
 It is what the name says: a lamp. The idea is to be able to control the tray icon through stdin, so that a program can display permanent notifications that do not popup.
 `itsalamp` receives commands from the standard input. The input is read line by line and each line is expected to be of one of the following forms:
 
-- #_COLOR_\[:_ICON_\] _MESSAGE_
-  - Change the icon color to _COLOR_ and usage _MESSAGE_ as tooltip. If _ICON_ is informed, a new icon is loaded.
-- +_OPTION_ \[_VALUE_\]
-  - Adds a new option to the menu. If the user selects _OPTION_, `itsalamp` will print _VALUE_ to the standard output, or _OPTION_ if _VALUE_ was not provided.
-- -_OPTION_
+- #**COLOR**\[:**ICON**\] **MESSAGE**
+  - Change the icon color to **COLOR** and usage **MESSAGE** as tooltip. If **ICON** is informed, a new icon is loaded.
+- +**OPTION** \[**VALUE**\]
+  - Adds a new option to the menu. If the user selects **OPTION**, `itsalamp` will print **VALUE** to the standard output, or **OPTION** if **VALUE** was not provided.
+- -**OPTION**
   - Removes the given option from the menu.
 - !quit
   - Quits the program (!exit works as well).
 
-_COLOR_ is an RGB color in hexadecimal format (e.g., BB99CC). Single or double quotes can be used when a term has spaces on it. A `\\` can also be used to escape any character. Icons are searched in the following directories:
+**COLOR** is an RGB color in hexadecimal format (e.g., BB99CC). Single or double quotes can be used when a term has spaces on it. A `\` can also be used to escape any character. Icons are searched in the following directories:
 
     $XDG_CONFIG_HOME/itsalamp/icons/
     /usr/local/share/icons/itsalamp/
@@ -41,11 +41,11 @@ This program is a countdown which outputs commands for `itsalamp`. It should be 
 
     itsacounter <[HOURSh][MINUTESm][SECONDSs]> <INITIAL COLOR> <FINAL COLOR> <ICONS...>
 
-As time passes, the icon color will go from _INITIAL COLOR_ to _FINAL COLOR_ using a brightness preserving interpolation. The icon is changed in a way that each icon appears for the same amount of time. `itsacounter` also receives commands from the standard input:
+As time passes, the icon color will go from **INITIAL COLOR** to **FINAL COLOR** using a brightness preserving interpolation. The icon is changed in a way that each icon appears for the same amount of time. `itsacounter` also receives commands from the standard input:
 
 - reset
   - Resets the timer.
-- [_HOURS_h]\[_MINUTES_m\]\[_SECONDS_s\]
+- \[**HOURS**h\]\[**MINUTES**m\]\[**SECONDS**s\]
   - Sets the timer to the specified time.
 
 ### itsalarm
