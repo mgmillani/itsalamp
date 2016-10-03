@@ -43,6 +43,9 @@ if(GTK2_FOUND)
 			icons/wallclock-t2.svg
 			icons/wallclock-t3.svg
 			icons/wallclock-t4.svg
+			icons/trizza-t0.svg
+			icons/trizza-t1.svg
+			icons/trizza-t2.svg
 		DESTINATION share/icons/itsalamp
 		)
 
