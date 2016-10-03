@@ -343,13 +343,11 @@ int parseIcon(char *input, t_colorInput *colorInput)
 		return -1;
 	if(cl == 3)
 	{
-		if(state == COLOR_MOST || state == NO_QUOTE)
-		{
-			*message = NULL;
-			return -1;
-		}
+		// parse stopped in the middle
+		if(state == DOUBLE_QUOTE || state == SINGLE_QUOTE)
+			return i;
 	}
-	// parse stopped in the middle
-	return i;
+
+	return -1;
 }
 
