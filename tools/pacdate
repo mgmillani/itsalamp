@@ -1,0 +1,30 @@
+#!/bin/sh
+
+ICON=shield-1.svg
+COLOR=88FF33
+TERMINAL=urxvt
+
+UPDATES=$(checkupdates | wc -l)
+
+function update()
+{
+	# updates the icon
+	echo "#$COLOR:'$ICON' There are $UPDATES updates."
+	# adds a menu option
+	echo "+Update update"
+	# waits for input
+	head -n 1 "$FIFO"
+	$TERMINAL -e sudo pacman -Syu
+}
+
+if (( $UPDATES > 0 ))
+then
+	# setup a fifo
+	PID=$$
+	mkdir -p /tmp/pacdate
+	FIFO=/tmp/pacdate/fifo."$PID"
+	# if the fifo already exists, it belonged to a dead process
+	rm -f "$FIFO"
+	mkfifo "$FIFO"
+	update | itsalamp > "$FIFO"
+fi
