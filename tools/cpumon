@@ -8,17 +8,21 @@ CORES=($(mpstat | grep -Eo "[0-9]+ CPU"))
 CORES=${CORES[0]}
 SINGLEMAX=$[ 100 / $CORES + 1 ]
 
-echo "#$SINGLECOLOR:'${ICONS[0]}' 0%"
+function monitor()
+{
+	echo "#$SINGLECOLOR:'${ICONS[0]}' 0%"
+	mpstat 3 | stdbuf -oL gawk '$12 ~ /[0-9.]+/  { $var=100 - $12 ; sub(/\.[0-9]*/, "", $var) ; print $var }' | while read line
+	do
+		USAGE=$line
+		if [[ $USAGE -le $SINGLEMAX ]]
+		then
+			I=$[ $NUMICONS * $USAGE / ($SINGLEMAX + 1)  ]
+			echo "#$SINGLECOLOR:'${ICONS[$I]}' $USAGE%"
+		else
+			I=$[ $NUMICONS * $USAGE / 101  ]
+			echo "#$FULLCOLOR:'${ICONS[$I]}' $USAGE%"
+		fi
+	done
+}
 
-mpstat 3 | stdbuf -oL gawk '$12 ~ /[0-9.]+/  { $var=100 - $12 ; sub(/\.[0-9]*/, "", $var) ; print $var }' | while read line
-do
-	USAGE=$line
-	if [[ $USAGE -le $SINGLEMAX ]]
-	then
-		I=$[ $NUMICONS * $USAGE / ($SINGLEMAX + 1)  ]
-		echo "#$SINGLECOLOR:'${ICONS[$I]}' $USAGE%"
-	else
-		I=$[ $NUMICONS * $USAGE / 101  ]
-		echo "#$FULLCOLOR:'${ICONS[$I]}' $USAGE%"
-	fi
-done | itsalamp
+monitor | itsalamp
