@@ -128,6 +128,7 @@ void printColor(unsigned char color[])
  */
 int parseTime(char *time)
 {
+	int valid = 0;
 	int secs = 0;
 	int i;
 	int j=0;
@@ -139,16 +140,19 @@ int parseTime(char *time)
 			case 'H':
 				secs += 3600 * atoi(time+j);
 				j = i+1;
+				valid = 1;
 				break;
 			case 'm':
 			case 'M':
 				secs += 60 * atoi(time+j);
 				j = i+1;
+				valid = 1;
 				break;
 			case 's':
 			case 'S':
 				secs += atoi(time+j);
 				j = i+1;
+				valid = 1;
 				break;
 			default:
 				// if it is not a digit, then the format is incorrect
@@ -156,7 +160,7 @@ int parseTime(char *time)
 					return -1;
 		}
 	}
-	return secs;
+	return valid ? secs : -1;
 }
 
 /**
@@ -206,14 +210,22 @@ int waitForInput(t_timer *t, int numicons, time_t *t0, char **icon)
 	int retval;
 	int restart = 0;
 
-	FD_ZERO(&rfds);
-	FD_SET(0, &rfds); // stdin = 0
+	if(!feof(stdin))
+	{
+		FD_ZERO(&rfds);
+		FD_SET(0, &rfds); // stdin = 0
 
-	// up to one second
-	tv.tv_sec = 1;
-	tv.tv_usec = 0;
-
-	retval = select(1, &rfds, NULL, NULL, &tv);
+		// up to one second
+		tv.tv_sec = 1;
+		tv.tv_usec = 0;
+		retval = select(1, &rfds, NULL, NULL, &tv);
+	}
+	else
+	{
+		retval = 0;
+		TRACE("Sleep");
+		usleep(1000*1000);
+	}
 
 	// if there is something to read
 	if(retval > 0)
