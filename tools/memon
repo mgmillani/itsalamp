@@ -15,8 +15,9 @@ do
 	then
 		INFO=(${line:5: -1})
 #		echo Total "${INFO[0]}" Used "${INFO[1]}"
-		if [[ ${INFO[1]} > $HIGH ]]
+		if [[ ${INFO[1]} -ge $HIGH ]]
 		then
+			echo ${INFO[1]} high $HIGH
 			HWIDTH=$[ ${INFO[0]} - $HIGH ]
 			COLOR=$HIGHC
 			I=$[ (${INFO[1]} - $HIGH) / ($HWIDTH / NUMICONS) ]
