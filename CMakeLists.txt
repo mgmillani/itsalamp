@@ -27,7 +27,7 @@ if(GTK2_FOUND)
 		RUNTIME DESTINATION bin/
 		)
 	install(
-		PROGRAMS tools/itsalarm tools/memon tools/cpumon
+		PROGRAMS tools/itsalarm tools/memon tools/cpumon tools/pacdate
 		DESTINATION bin/
 		)
 	install(
