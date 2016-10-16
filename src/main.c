@@ -33,6 +33,8 @@
 
 #include "debug.h"
 
+#define G_THREADS_ENABLED
+
 typedef struct s_option
 {
 	char *name;
@@ -315,9 +317,11 @@ void quitMenu(GtkMenuItem *menuItem, gpointer user_data)
 
 void popupMenu (GtkStatusIcon *status_icon, guint button, guint activate_time, gpointer user_data)
 {
+	TRACE("Pop up");
 	GtkMenu *menu = user_data;
 	gtk_widget_show_all(GTK_WIDGET(menu));
 	gtk_menu_popup (menu, NULL, NULL, gtk_status_icon_position_menu, status_icon, button, activate_time);
+	TRACE("Pop down");
 }
 
 void setupMenu(t_iconData *iconData)
@@ -341,6 +345,7 @@ void setupMenu(t_iconData *iconData)
 
 int main (int argc, char **argv)
 {
+	gdk_threads_init();
 	/* Initialize i18n support */
 	gtk_set_locale ();
 	/* Initialize the widget set */
@@ -376,7 +381,7 @@ int main (int argc, char **argv)
 
 	setupMenu(&iconData);
 
-	/*GThread *updateAllThread =*/ g_thread_new ("update icon", updateAll, &iconData);
+	g_thread_new ("update icon", updateAll, &iconData);
 
 	gdk_threads_enter();
 	TRACE("thread created");
