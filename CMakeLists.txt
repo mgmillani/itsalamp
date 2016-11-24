@@ -27,7 +27,7 @@ if(GTK2_FOUND)
 		RUNTIME DESTINATION bin/
 		)
 	install(
-		PROGRAMS tools/itsalarm tools/memon tools/cpumon tools/pacdate
+		PROGRAMS tools/itsalarm tools/memon tools/cpumon tools/pacdate tools/monnet
 		DESTINATION bin/
 		)
 	install(
@@ -38,6 +38,7 @@ if(GTK2_FOUND)
 			icons/diamond-1.svg
 			icons/shield-1.svg
 			"icons/twin moons.svg"
+			icons/double-circles.svg
 			icons/wallclock-t0.svg
 			icons/wallclock-t1.svg
 			icons/wallclock-t2.svg

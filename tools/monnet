@@ -1,0 +1,64 @@
+#!/bin/bash
+
+PDOWN=0
+PUP=0
+
+DLOW=$[ 50 * 1024 ]
+DHIGH=$[ 500 * 1024 ]
+ULOW=$[ 10 * 1024 ]
+UHIGH=$[ 60 * 1024 ]
+
+ICON="double-circles"
+
+while [[ 1 ]]
+do
+	DOWN=0
+	UP=0
+	while read line
+	do
+		cols=($line)
+		DOWN=$[ $DOWN + ${cols[1]} ]
+		UP=$[ $UP + ${cols[9]} ]
+	done < <( cat /proc/net/dev | tail -n+4 )
+	SD=$[ $DOWN - $PDOWN ]
+	SU=$[ $UP - $PUP ]
+	#echo $[ $DOWN - $PDOWN ] $[ $UP - $PUP ]
+	# convert download -> range
+	if [[ $SD -lt $DLOW ]]
+	then
+		DT=none
+	elif [[ $SD -gt $DHIGH ]]
+	then
+		DT=high
+	else
+		DT=low
+	fi
+	# convert upload -> range
+	if [[ $SU -lt $ULOW ]]
+	then
+		UT=none
+	elif [[ $SU -gt $UHIGH ]]
+	then
+		UT=high
+	else
+		UT=low
+	fi
+	SU=$[ $SU / 1024 ]
+	SD=$[ $SD / 1024 ]
+	RU=$[ 205 * $SU / 700 + 50 ]
+	if [[ $RU -gt 255 ]]
+	then
+		RU=255
+	fi
+	RD=$[ 205 * $SD / 700 + 50 ]
+	if [[ $RD -gt 255 ]]
+	then
+		RD=255
+	fi
+	DC=$(printf "%02x" $RD)
+	UC=$(printf "%02x" $RU)
+	echo "#$UC""$DC""$UC:'$ICON.svg' Up: $SU kB/s\nDown: $SD kB/s"
+	PDOWN=$DOWN
+	PUP=$UP
+	sleep 1
+done | itsalamp
