@@ -332,12 +332,14 @@ int parseIcon(char *input, t_colorInput *colorInput)
 				if( c != ' ' && c != '\t')
 				{
 					*message = input + i;
+					escapeText(*message);
 					return -1;
 				}
 				break;
 		}
 		i++;
 	}
+
 	// read all color channels and not in the middle of something else
 	if(cl == 0 && state == START)
 		return -1;
@@ -351,3 +353,34 @@ int parseIcon(char *input, t_colorInput *colorInput)
 	return -1;
 }
 
+void escapeText(char *text)
+{
+	TRACE("there is no escape");
+	int r,w;
+	char e = 0;
+	for(r=w=0 ; text[r]!='\0' ; r++)
+	{
+		// should escape next character
+		if(e)
+		{
+			switch(text[r])
+			{
+				case 'r':
+				case 'n':
+					text[w++] = '\n';
+					break;
+				case 't':
+					text[w++] = '\t';
+					break;
+				default:
+					text[w++] = text[r];
+			}
+			e = 0;
+		}
+		else if(text[r] == '\\')
+			e = 1;
+		else
+			text[w++] = text[r];
+	}
+	text[w] = '\0';
+}

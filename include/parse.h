@@ -105,4 +105,10 @@ int parseCommand(char *input, t_commandInput *commandInput);
  */
 int readWord(char **text, char **word);
 
+/**
+ * Replace escape sequences on the given text. The available sequences are \n, \r and \t.
+ * All other cases will be replaced by the character after the backslash (\)
+ */
+void escapeText(char *text);
+
 #endif /* PARSE_H */
