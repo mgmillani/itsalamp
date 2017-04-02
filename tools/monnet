@@ -3,8 +3,8 @@
 PDOWN=0
 PUP=0
 
-DHIGH=$[ 500 * 1024 ]
-UHIGH=$[ 60 * 1024 ]
+DHIGH=$[ 500  ]
+UHIGH=$[ 60 ]
 
 ICON="double-circles.svg"
 
@@ -17,17 +17,17 @@ do
 		cols=($line)
 		DOWN=$[ $DOWN + ${cols[1]} ]
 		UP=$[ $UP + ${cols[9]} ]
-	done < <( cat /proc/net/dev | tail -n+4 )
+	done < <( cat /proc/net/dev | tail -n+3 )
 	SD=$[ $DOWN - $PDOWN ]
 	SU=$[ $UP - $PUP ]
 	# Set a color for upload
-	RU=$[ 205 * $SU / UHIGH + 50 ]
+	RU=$[ 205 * $SU / $UHIGH + 50 ]
 	if [[ $RU -gt 255 ]]
 	then
 		RU=255
 	fi
 	# Set a color for download
-	RD=$[ 205 * $SD / DHIGH + 50 ]
+	RD=$[ 205 * $SD / $DHIGH + 50 ]
 	if [[ $RD -gt 255 ]]
 	then
 		RD=255
