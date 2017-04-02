@@ -3,8 +3,8 @@
 PDOWN=0
 PUP=0
 
-DHIGH=$[ 500  ]
-UHIGH=$[ 60 ]
+DHIGH=$[ 500  * 1024 ]
+UHIGH=$[ 60 * 1024 ]
 
 ICON="double-circles.svg"
 
@@ -27,7 +27,7 @@ do
 		RU=255
 	fi
 	# Set a color for download
-	RD=$[ 205 * $SD / $DHIGH + 50 ]
+	RD=$[ 215 * $SD / $DHIGH + 40 ]
 	if [[ $RD -gt 255 ]]
 	then
 		RD=255
